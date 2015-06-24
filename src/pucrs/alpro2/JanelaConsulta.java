@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
  */
 public class JanelaConsulta extends javax.swing.JFrame {
 
+	private Dados dados;
 	private GerenciadorMapa gerenciador;
 	private EventosMouse mouse;
 
@@ -43,7 +44,8 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		// initComponents();
 
 		GeoPosition poa = new GeoPosition(-30.05, -51.18);
-		gerenciador = new GerenciadorMapa(poa, GerenciadorMapa.FonteImagens.VirtualEarth);
+		gerenciador = new GerenciadorMapa(poa,
+				GerenciadorMapa.FonteImagens.VirtualEarth);
 		mouse = new EventosMouse();
 		gerenciador.getMapKit().getMainMap().addMouseListener(mouse);
 		gerenciador.getMapKit().getMainMap().addMouseMotionListener(mouse);
@@ -73,6 +75,11 @@ public class JanelaConsulta extends javax.swing.JFrame {
 
 		this.setSize(800, 600);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		// Importante leitura de dados;
+		dados = new Dados();
+		dados.lerArquivoDeParadasDeTaxi();
+
 	}
 
 	private void consulta(java.awt.event.ActionEvent evt) {
@@ -86,11 +93,21 @@ public class JanelaConsulta extends javax.swing.JFrame {
 
 		// Exemplo:
 
-		double valor = 250; // ex: valor da consulta (criminalidade ou
-							// distância)
-		GeoPosition loc = new GeoPosition(-30.05, -51.18); // ex: localização da
-															// parada
+		// ex: valor da consulta (criminalidade ou distancia)
+		double valor = 250;
+
+		// ex: localiza��o da parada
+		GeoPosition loc = new GeoPosition(-30.05, -51.18);
+		GeoPosition loc2 = new GeoPosition(dados.listaEnderecoParadaTaxis
+				.get(0).getLatitude(), dados.listaEnderecoParadaTaxis.get(0)
+				.getLongitude());
+		GeoPosition loc3 = new GeoPosition(dados.listaEnderecoParadaTaxis
+				.get(1).getLatitude(), dados.listaEnderecoParadaTaxis.get(1)
+				.getLongitude());
+
 		lstPoints.add(new MyWaypoint(Color.BLUE, valor, loc));
+		lstPoints.add(new MyWaypoint(Color.BLUE, 250, loc2));
+		lstPoints.add(new MyWaypoint(Color.BLUE, 250, loc3));
 
 		// Informa o resultado para o gerenciador
 		gerenciador.setPontos(lstPoints);
@@ -126,7 +143,8 @@ public class JanelaConsulta extends javax.swing.JFrame {
 			// Arrasta com o botão 3 para definir o raio
 			if (lastButton == MouseEvent.BUTTON3) {
 				JXMapViewer mapa = gerenciador.getMapKit().getMainMap();
-				gerenciador.setSelecaoBorda(mapa.convertPointToGeoPosition(e.getPoint()));
+				gerenciador.setSelecaoBorda(mapa.convertPointToGeoPosition(e
+						.getPoint()));
 				gerenciador.getMapKit().repaint();
 			}
 		}

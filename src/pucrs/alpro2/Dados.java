@@ -15,16 +15,17 @@ public class Dados {
 	private String linha;
 	private String csvDivisor1;
 	private String csvDivisor2;
+	public LinkedList<Ponto> listaEnderecoParadaTaxis;
 
 	/*
 	 * Metodo para ler os arquivos de furtos, roubos e paradas de taxi
 	 * 
-	 * @param linkedList para guardar informa√ß√µes das paradas de t√°xi
+	 * @param linkedList para guardar informaÁıes das paradas de t·xi
 	 */
-	public LinkedList<Ponto> lerArquivoDeParadasDeTaxi() {
+	public void lerArquivoDeParadasDeTaxi() {
 
 		Ponto enderecoParadaTaxi;
-		LinkedList<Ponto> listaEnderecoParadaTaxis = null;
+		listaEnderecoParadaTaxis = null;
 
 		BufferedReader br = null;
 
@@ -44,7 +45,7 @@ public class Dados {
 
 				enderecoParadaTaxi.setId(Integer.valueOf(infoParada[0]));
 
-				// para guardar os a expesifica√ß√£o e logradouro separadamente
+				// para guardar os a expesificaÁ„o e logradouro separadamente
 				String[] aux = infoParada[1].split(csvDivisor2);
 				enderecoParadaTaxi.setExpesificacao(aux[0]);
 
@@ -60,7 +61,7 @@ public class Dados {
 
 				// Chama os metodos para calcular o grau de criminalidade
 				calculaGrauCriminalidadeFurtos(enderecoParadaTaxi);
-				//calcularGrauCriminalidadeRubos(enderecoParadaTaxi);
+				// calcularGrauCriminalidadeRubos(enderecoParadaTaxi);
 
 				listaEnderecoParadaTaxis.add(enderecoParadaTaxi);
 			}
@@ -82,8 +83,6 @@ public class Dados {
 			}
 		}
 
-		return listaEnderecoParadaTaxis;
-
 	}
 
 	/*
@@ -95,7 +94,7 @@ public class Dados {
 	 * @returns lista EnderecoParadaTaxi com o grau calculado
 	 */
 
-	public Ponto calculaGrauCriminalidadeFurtos(Ponto enderecoParadaTaxi) {
+	private void calculaGrauCriminalidadeFurtos(Ponto enderecoParadaTaxi) {
 
 		linha = "";
 		csvDivisor1 = ";";
@@ -118,23 +117,32 @@ public class Dados {
 						if (infoFurtos[11] != null && infoFurtos[11] != "") {
 							if (infoFurtos[12] != null && infoFurtos[12] != "") {
 
-								GeoPosition geoPositionParada = new GeoPosition(enderecoParadaTaxi.getLatitude(), enderecoParadaTaxi.getLongitude());
-								GeoPosition geoPositionFurto = new GeoPosition(Double.valueOf(infoFurtos[11]), Double.valueOf(infoFurtos[12]));
+								GeoPosition geoPositionParada = new GeoPosition(
+										enderecoParadaTaxi.getLatitude(),
+										enderecoParadaTaxi.getLongitude());
+								GeoPosition geoPositionFurto = new GeoPosition(
+										Double.valueOf(infoFurtos[11]),
+										Double.valueOf(infoFurtos[12]));
 
-								// n√£o tenho certeza do que ele me retorna, se √© metros ou km
-								double diferenca = AlgoritmosGeograficos.calcDistancia(geoPositionParada, geoPositionFurto);
+								// n„o tenho certeza do que ele me retorna, se
+								// È
+								// metros ou km
+								double diferenca = AlgoritmosGeograficos
+										.calcDistancia(geoPositionParada,
+												geoPositionFurto);
 
-								// acho que a comparacao n√£o esta correta, n√£o sei se o valor deveria ser este
+								// acho que a comparacao n„o esta correta, n„o
+								// sei se o valor deveria ser este
 								if (diferenca < 1.5) {
 									enderecoParadaTaxi.somaCriminalidade();
-									System.out.println("somaCriminalidade: " + enderecoParadaTaxi.getCriminalidade());
+
 								}
 
 							}
 						}
 
 					} catch (NumberFormatException numberFormatException) {
-						System.out.println("N√∫mero fora de padr√£o");
+
 					}
 				}
 				cont++;
@@ -157,48 +165,63 @@ public class Dados {
 			}
 		}
 
-		return enderecoParadaTaxi;
-
 	}
 
-	public Ponto calcularGrauCriminalidadeRubos(Ponto enderecoParadaTaxi) {
+	private void calcularGrauCriminalidadeRubos(Ponto enderecoParadaTaxi) {
 
-		String linha = "";
-		String csvDivisor = ";";
+		linha = "";
+		csvDivisor1 = ";";
 
 		BufferedReader br = null;
 
 		try {
 
 			br = new BufferedReader(new FileReader("roubos.csv"));
+
+			int cont = 0;
 			while ((linha = br.readLine()) != null) {
-				String[] infoRoubos = linha.split(csvDivisor);
 
-				// try para tratar caso o campo esteja vazio ou nullo
-				try {
-					if (infoRoubos[11] != null && infoRoubos[11] != "") {
-						if (infoRoubos[12] != null && infoRoubos[12] != "") {
+				// ignorando a primeira linha :D
+				if (cont >= 1) {
+					String[] infoFurtos = linha.split(csvDivisor1);
 
-							GeoPosition geoPositionParada = new GeoPosition(enderecoParadaTaxi.getLatitude(), enderecoParadaTaxi.getLongitude());
-							GeoPosition geoPositionRoubo = new GeoPosition(Double.valueOf(infoRoubos[11]), Double.valueOf(infoRoubos[12]));
+					// try para tratar caso o campo esteja vazio ou nullo
+					try {
+						if (infoFurtos[11] != null && infoFurtos[11] != "") {
+							if (infoFurtos[12] != null && infoFurtos[12] != "") {
 
-							// n√£o tenho certeza do que ele me retorna, se √© metros ou km
-							double diferenca = AlgoritmosGeograficos.calcDistancia(geoPositionParada, geoPositionRoubo);
+								GeoPosition geoPositionParada = new GeoPosition(
+										enderecoParadaTaxi.getLatitude(),
+										enderecoParadaTaxi.getLongitude());
+								GeoPosition geoPositionFurto = new GeoPosition(
+										Double.valueOf(infoFurtos[11]),
+										Double.valueOf(infoFurtos[12]));
 
-							// acho que a comparacao n√£o esta correta, n√£o sei se o valor deveria ser este
-							if (diferenca < 1.5) {
-								enderecoParadaTaxi.somaCriminalidade();
-								System.out.println("somaCriminalidade: " + enderecoParadaTaxi.getCriminalidade());
+								// n„o tenho certeza do que ele me retorna, se
+								// È
+								// metros ou km
+								double diferenca = AlgoritmosGeograficos
+										.calcDistancia(geoPositionParada,
+												geoPositionFurto);
+
+								// acho que a comparacao n„o esta correta, n„o
+								// sei se o valor deveria ser este
+								if (diferenca < 1.5) {
+									enderecoParadaTaxi.somaCriminalidade();
+
+								}
+
 							}
-
 						}
+
+					} catch (NumberFormatException numberFormatException) {
+
 					}
-
-				} catch (NumberFormatException numberFormatException) {
-					System.out.println("N√∫mero fora de padr√£o");
 				}
-
+				cont++;
 			}
+			System.out.println("somaCriminalidade: "
+					+ enderecoParadaTaxi.getCriminalidade());
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -216,8 +239,15 @@ public class Dados {
 				}
 			}
 		}
+	}
 
-		return enderecoParadaTaxi;
+	@Override
+	public String toString() {
+		String aux = "";
+		for (Ponto ponto : listaEnderecoParadaTaxis) {
+			System.out.println(ponto.getCriminalidade());
+		}
+		return super.toString();
 	}
 
 }
