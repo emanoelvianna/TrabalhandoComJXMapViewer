@@ -43,10 +43,6 @@ public class GerenciadorMapa {
 	private double valorMenor;
 	private double valorMaior;
 
-	private GeoPosition paradaTaxi;
-	private GeoPosition furto;
-	private GeoPosition roubos;
-
 	public enum FonteImagens {
 
 		OpenStreetMap, VirtualEarth
@@ -67,7 +63,8 @@ public class GerenciadorMapa {
 		if (fonte == FonteImagens.OpenStreetMap) {
 			info = new OSMTileFactoryInfo();
 		} else {
-			info = new VirtualEarthTileFactoryInfo(VirtualEarthTileFactoryInfo.MAP);
+			info = new VirtualEarthTileFactoryInfo(
+					VirtualEarthTileFactoryInfo.MAP);
 		}
 		DefaultTileFactory tileFactory = new DefaultTileFactory(info);
 		jXMapKit.setTileFactory(tileFactory);
@@ -89,10 +86,12 @@ public class GerenciadorMapa {
 		pontosPainter.setRenderer(new WaypointRenderer<MyWaypoint>() {
 
 			@Override
-			public void paintWaypoint(Graphics2D g, JXMapViewer viewer, MyWaypoint wp) {
+			public void paintWaypoint(Graphics2D g, JXMapViewer viewer,
+					MyWaypoint wp) {
 
 				// Desenha cada waypoint como um pequeno círculo
-				Point2D point = viewer.getTileFactory().geoToPixel(wp.getPosition(), viewer.getZoom());
+				Point2D point = viewer.getTileFactory().geoToPixel(
+						wp.getPosition(), viewer.getZoom());
 				int x = (int) point.getX();
 				int y = (int) point.getY();
 				// g = (Graphics2D) g.create();
@@ -103,7 +102,8 @@ public class GerenciadorMapa {
 				float fator = (float) ((wp.getValue() - valorMenor) / (valorMaior - valorMenor));
 				// Seta a opacidade da cor usando o fator de importância
 				// calculado (0=mínimo,1=máximo)
-				g.setColor(new Color(cor.getRed() / 255.0f, cor.getGreen() / 255.0f, cor.getBlue() / 255.0f, fator));
+				g.setColor(new Color(cor.getRed() / 255.0f,
+						cor.getGreen() / 255.0f, cor.getBlue() / 255.0f, fator));
 				g.fill(new Ellipse2D.Float(x - 3, y - 3, 6, 6));
 			}
 		});
@@ -118,7 +118,9 @@ public class GerenciadorMapa {
 				Point2D pont2 = map.convertGeoPositionToPoint(selBorda);
 				int x = (int) point.getX();
 				int y = (int) point.getY();
-				int raio = (int) Math.sqrt(Math.pow(point.getX() - pont2.getX(), 2) + Math.pow(point.getY() - pont2.getY(), 2));
+				int raio = (int) Math.sqrt(Math.pow(
+						point.getX() - pont2.getX(), 2)
+						+ Math.pow(point.getY() - pont2.getY(), 2));
 				int r = raio / 2;
 				g.setColor(Color.RED);
 				g.setStroke(new BasicStroke(2));
@@ -128,12 +130,12 @@ public class GerenciadorMapa {
 			}
 		};
 
-		// Um CompoundPainter permite combinar vários painters ao mesmo tempo...
+		// Um CompoundPainter permite combinar vários painters ao mesmo
+		// tempo...
 		CompoundPainter cp = new CompoundPainter();
 		cp.setPainters(pontosPainter, guiPainter);
 
 		jXMapKit.getMainMap().setOverlayPainter(cp);
-		
 
 		selCentro = null;
 		selBorda = null;
@@ -153,8 +155,8 @@ public class GerenciadorMapa {
 	}
 
 	/*
-	 * Informa a localização de um ponto da borda da região Utilizamos isso para
-	 * definir o raio da região e desenhar o círculo
+	 * Informa a localização de um ponto da borda da região Utilizamos isso
+	 * para definir o raio da região e desenhar o círculo
 	 * 
 	 * @param ponto da borda
 	 */

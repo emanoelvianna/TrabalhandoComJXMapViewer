@@ -15,7 +15,7 @@ public class Dados {
 	private String linha;
 	private String csvDivisor1;
 	private String csvDivisor2;
-	public LinkedList<Ponto> listaEnderecoParadaTaxis;
+	private LinkedList<Ponto> listaEnderecoParadaTaxis;
 
 	/*
 	 * Metodo para ler os arquivos de furtos, roubos e paradas de taxi
@@ -241,6 +241,10 @@ public class Dados {
 		}
 	}
 
+	public LinkedList<Ponto> getListaEnderecoParadaTaxis() {
+		return listaEnderecoParadaTaxis;
+	}
+
 	@Override
 	public String toString() {
 		String aux = "";
@@ -249,5 +253,4 @@ public class Dados {
 		}
 		return super.toString();
 	}
-
 }

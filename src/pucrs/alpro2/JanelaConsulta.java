@@ -7,29 +7,30 @@ package pucrs.alpro2;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
-import javax.swing.JButton;
+import pucrs.alpro2.algoritmos.AlgoritmosGeograficos;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-/**
- *
- * @author Sandro
- */
 public class JanelaConsulta extends javax.swing.JFrame {
 
 	private Dados dados;
+	private LinkedList<Ponto> listaEnderecoParadaTaxis;
+	private Consultas consultas;
+
 	private GerenciadorMapa gerenciador;
 	private EventosMouse mouse;
 
@@ -83,10 +84,11 @@ public class JanelaConsulta extends javax.swing.JFrame {
 	}
 
 	private void consulta(java.awt.event.ActionEvent evt) {
-
 		// Para obter o centro e o raio, usar como segue:
 		GeoPosition centro = gerenciador.getSelecaoCentro();
 		int raio = gerenciador.getRaio();
+
+		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
 
 		// Lista para armazenar o resultado da consulta
 		List<MyWaypoint> lstPoints = new ArrayList<>();
@@ -98,16 +100,18 @@ public class JanelaConsulta extends javax.swing.JFrame {
 
 		// ex: localização da parada
 		GeoPosition loc = new GeoPosition(-30.05, -51.18);
-		GeoPosition loc2 = new GeoPosition(dados.listaEnderecoParadaTaxis
-				.get(0).getLatitude(), dados.listaEnderecoParadaTaxis.get(0)
-				.getLongitude());
-		GeoPosition loc3 = new GeoPosition(dados.listaEnderecoParadaTaxis
-				.get(1).getLatitude(), dados.listaEnderecoParadaTaxis.get(1)
-				.getLongitude());
 
-		lstPoints.add(new MyWaypoint(Color.BLUE, valor, loc));
-		lstPoints.add(new MyWaypoint(Color.BLUE, 250, loc2));
-		lstPoints.add(new MyWaypoint(Color.BLUE, 250, loc3));
+		double distancia1 = AlgoritmosGeograficos.calcDistancia(loc, centro) * 1000;
+
+		DecimalFormat df = new DecimalFormat("#.00");
+		df.format(distancia1);
+
+		System.out.println("Distancia: " + distancia1);
+		System.out.println("Raio: " + raio);
+
+		if (raio >= distancia1) {
+			lstPoints.add(new MyWaypoint(Color.BLUE, valor, loc));
+		}
 
 		// Informa o resultado para o gerenciador
 		gerenciador.setPontos(lstPoints);

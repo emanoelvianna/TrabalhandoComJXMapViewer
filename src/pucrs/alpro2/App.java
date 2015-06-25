@@ -17,8 +17,6 @@ public class App {
 
 		JanelaConsulta janela = new JanelaConsulta();
 		janela.setVisible(true);
-		Dados d = new Dados();
-		d.lerArquivoDeParadasDeTaxi();
-		d.toString();
+		
 	}
 }
