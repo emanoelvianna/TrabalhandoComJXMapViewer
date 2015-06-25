@@ -102,8 +102,13 @@ public class GerenciadorMapa {
 				float fator = (float) ((wp.getValue() - valorMenor) / (valorMaior - valorMenor));
 				// Seta a opacidade da cor usando o fator de import√¢ncia
 				// calculado (0=m√≠nimo,1=m√°ximo)
-				g.setColor(new Color(cor.getRed() / 255.0f,
-						cor.getGreen() / 255.0f, cor.getBlue() / 255.0f, fator));
+				
+				
+				/*
+				 * Minha modificaÁ„o do trecho de cÛdigo!
+				 */
+				g.setColor(new Color(cor.getRed(), cor.getGreen(), cor.getBlue(), cor.getAlpha() / 2));
+				
 				g.fill(new Ellipse2D.Float(x - 3, y - 3, 6, 6));
 			}
 		});

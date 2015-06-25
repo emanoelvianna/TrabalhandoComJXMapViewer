@@ -29,7 +29,7 @@ public class JanelaConsulta extends javax.swing.JFrame {
 
 	private Dados dados;
 	private LinkedList<Ponto> listaEnderecoParadaTaxis;
-	private Consultas consultas;
+	private Consultas listaDeConsultas;
 
 	private GerenciadorMapa gerenciador;
 	private EventosMouse mouse;
@@ -80,6 +80,8 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		// Importante leitura de dados;
 		dados = new Dados();
 		dados.lerArquivoDeParadasDeTaxi();
+		
+		listaDeConsultas = new Consultas();
 
 	}
 
@@ -100,10 +102,15 @@ public class JanelaConsulta extends javax.swing.JFrame {
 			double distancia = AlgoritmosGeograficos.calcDistancia(
 					geoPositionPontoTaxi, centro) * 1000;
 			if (raio >= distancia) {
-				if (ponto.getCriminalidade() >= 250) {
+				if (ponto.getCriminalidade() >= 100) {
+					// Adiciona na lista quad de consultas
+					listaDeConsultas.adicionar(ponto);
+
 					lstPoints.add(new MyWaypoint(Color.BLUE, ponto
 							.getCriminalidade(), geoPositionPontoTaxi));
+
 				} else {
+					listaDeConsultas.adicionar(ponto);
 					lstPoints.add(new MyWaypoint(Color.GREEN, ponto
 							.getCriminalidade(), geoPositionPontoTaxi));
 
