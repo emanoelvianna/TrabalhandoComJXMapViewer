@@ -84,35 +84,51 @@ public class JanelaConsulta extends javax.swing.JFrame {
 	}
 
 	private void consulta(java.awt.event.ActionEvent evt) {
+
 		// Para obter o centro e o raio, usar como segue:
 		GeoPosition centro = gerenciador.getSelecaoCentro();
 		int raio = gerenciador.getRaio();
 
-		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
-
 		// Lista para armazenar o resultado da consulta
 		List<MyWaypoint> lstPoints = new ArrayList<>();
 
-		// Exemplo:
+		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
 
-		// ex: valor da consulta (criminalidade ou distancia)
-		double valor = 250;
+		for (Ponto ponto : listaEnderecoParadaTaxis) {
+			GeoPosition geoPositionPontoTaxi = new GeoPosition(
+					ponto.getLatitude(), ponto.getLongitude());
+			double distancia = AlgoritmosGeograficos.calcDistancia(
+					geoPositionPontoTaxi, centro) * 1000;
+			if (raio >= distancia) {
+				if (ponto.getCriminalidade() >= 250) {
+					lstPoints.add(new MyWaypoint(Color.BLUE, ponto
+							.getCriminalidade(), geoPositionPontoTaxi));
+				} else {
+					lstPoints.add(new MyWaypoint(Color.GREEN, ponto
+							.getCriminalidade(), geoPositionPontoTaxi));
 
-		// ex: localização da parada
-		GeoPosition loc = new GeoPosition(-30.05, -51.18);
-
-		double distancia1 = AlgoritmosGeograficos.calcDistancia(loc, centro) * 1000;
-
-		DecimalFormat df = new DecimalFormat("#.00");
-		df.format(distancia1);
-
-		System.out.println("Distancia: " + distancia1);
-		System.out.println("Raio: " + raio);
-
-		if (raio >= distancia1) {
-			lstPoints.add(new MyWaypoint(Color.BLUE, valor, loc));
+				}
+			}
 		}
 
+		/*
+		 * // Exemplo:
+		 * 
+		 * // ex: valor da consulta (criminalidade ou distancia) double valor =
+		 * 250;
+		 * 
+		 * // ex: localização da parada GeoPosition loc = new
+		 * GeoPosition(-30.05, -51.18);
+		 * 
+		 * double distancia1 = AlgoritmosGeograficos.calcDistancia(loc, centro)
+		 * * 1000;
+		 * 
+		 * System.out.println("Distancia: " + distancia1);
+		 * System.out.println("Raio: " + raio);
+		 * 
+		 * if (raio >= distancia1) { lstPoints.add(new MyWaypoint(Color.BLUE,
+		 * valor, loc)); }
+		 */
 		// Informa o resultado para o gerenciador
 		gerenciador.setPontos(lstPoints);
 		// Informa o intervalo de valores gerados, para calcular a cor de cada
