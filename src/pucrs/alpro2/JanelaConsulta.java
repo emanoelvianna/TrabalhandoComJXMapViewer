@@ -80,7 +80,7 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		// Importante leitura de dados;
 		dados = new Dados();
 		dados.lerArquivoDeParadasDeTaxi();
-		
+
 		listaDeConsultas = new Consultas();
 
 	}
@@ -97,24 +97,20 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
 
 		for (Ponto ponto : listaEnderecoParadaTaxis) {
+			
 			GeoPosition geoPositionPontoTaxi = new GeoPosition(
 					ponto.getLatitude(), ponto.getLongitude());
+			
 			double distancia = AlgoritmosGeograficos.calcDistancia(
 					geoPositionPontoTaxi, centro) * 1000;
+			
 			if (raio >= distancia) {
-				if (ponto.getCriminalidade() >= 100) {
-					// Adiciona na lista quad de consultas
-					listaDeConsultas.adicionar(ponto);
+				// Adiciona na lista quad de consultas
+				listaDeConsultas.adicionar(ponto, distancia);
 
-					lstPoints.add(new MyWaypoint(Color.BLUE, ponto
-							.getCriminalidade(), geoPositionPontoTaxi));
+				lstPoints.add(new MyWaypoint(Color.BLUE, ponto
+						.getCriminalidade(), geoPositionPontoTaxi));
 
-				} else {
-					listaDeConsultas.adicionar(ponto);
-					lstPoints.add(new MyWaypoint(Color.GREEN, ponto
-							.getCriminalidade(), geoPositionPontoTaxi));
-
-				}
 			}
 		}
 

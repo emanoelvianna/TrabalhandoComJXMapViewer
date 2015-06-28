@@ -13,12 +13,23 @@ public class Principal {
 		ponto1.somaCriminalidade();
 
 		Ponto ponto2 = new Ponto();
-		ponto2.setLogradouro("Pedro");
+		ponto2.setLogradouro("Joao");
+		ponto2.somaCriminalidade();
+		ponto2.somaCriminalidade();
+		ponto2.somaCriminalidade();
+		ponto2.somaCriminalidade();
+		ponto2.somaCriminalidade();
 		ponto2.somaCriminalidade();
 
+		Ponto ponto3 = new Ponto();
+		ponto3.setLogradouro("Pedro");
+		ponto3.somaCriminalidade();
+
+
 		Consultas consultas = new Consultas();
-		consultas.adicionar(ponto1);
-		consultas.adicionar(ponto2);
+		consultas.adicionar(ponto1, 10);
+		consultas.adicionar(ponto2, 13);
+		consultas.adicionar(ponto3, 4);
 
 		System.out.println(consultas.imprimirListaCriminalidade());
 

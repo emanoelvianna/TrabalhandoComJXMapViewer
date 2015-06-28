@@ -9,41 +9,42 @@ public class Consultas {
 	private class Nodo {
 
 		private Ponto ponto;
-		private Nodo nextCrim;
-		private Nodo nextDist;
-		private Nodo prevCrim;
-		private Nodo prevDist;
+		private Nodo proximoCriminalidade;
+		private Nodo proximoDistancia;
+		private Nodo anteriorCriminalidade;
+		private Nodo anteriorDistancia;
+		private double distancia;
 
 		public Nodo getProximoNodoCriminalidade() {
-			return nextCrim;
+			return proximoCriminalidade;
 		}
 
 		public void setProximoNodoCriminalidade(Nodo nextCrim) {
-			this.nextCrim = nextCrim;
+			this.proximoCriminalidade = nextCrim;
 		}
 
 		public Nodo getProximoNodoDistancia() {
-			return nextDist;
+			return proximoDistancia;
 		}
 
 		public void setProximoNodoDistancia(Nodo nextDist) {
-			this.nextDist = nextDist;
+			this.proximoDistancia = nextDist;
 		}
 
 		public Nodo getNodoAnteriorCriminalidade() {
-			return prevCrim;
+			return anteriorCriminalidade;
 		}
 
 		public void setNodoAnteriorCriminalidade(Nodo prevCrim) {
-			this.prevCrim = prevCrim;
+			this.anteriorCriminalidade = prevCrim;
 		}
 
 		public Nodo getNodoAnteriorDistancia() {
-			return prevDist;
+			return anteriorDistancia;
 		}
 
 		public void setNodoAnteriorDistancia(Nodo prevDist) {
-			this.prevDist = prevDist;
+			this.anteriorDistancia = prevDist;
 		}
 
 		public Ponto getPonto() {
@@ -52,6 +53,14 @@ public class Consultas {
 
 		public void setPonto(Ponto ponto) {
 			this.ponto = ponto;
+		}
+
+		public double getDistancia() {
+			return distancia;
+		}
+
+		public void setDistancia(double distancia) {
+			this.distancia = distancia;
 		}
 
 	}
@@ -79,89 +88,241 @@ public class Consultas {
 	private Nodo ultimoNodoCriminalidade;
 	private Nodo ultimoNodoDistancia;
 
-	public void adicionar(Ponto ponto) {
-		/*
-		 * A ideia aqui é deixar generico, ou seja quando um ponto for
-		 * adicionado, ele ira ser adicionado na ordem de criminalidade e de
-		 * distancia também.
-		 */
-		if (ponto != null) {
+	public void adicionar(Ponto ponto, double distancia) {
+		try {
 			Nodo novoNodo = new Nodo();
 			novoNodo.setPonto(ponto);
-
-			if (primeiroNodoCriminalidade == null) {
-				novoNodo.setProximoNodoCriminalidade(null);
-				novoNodo.setNodoAnteriorCriminalidade(null);
-				ultimoNodoCriminalidade = novoNodo;
-				primeiroNodoCriminalidade = novoNodo;
-			} else {
-				// adicionarNovoNodoPorCriminalidade(novoNodo);
-				addCriminalidade(novoNodo);
-			}
+			novoNodo.setDistancia(distancia);
+			/**
+			 * if (primeiroNodoCriminalidade == null) {
+			 * novoNodo.setProximoNodoCriminalidade(null);
+			 * novoNodo.setNodoAnteriorCriminalidade(null);
+			 * ultimoNodoCriminalidade = novoNodo; primeiroNodoCriminalidade =
+			 * novoNodo; } else { //
+			 * adicionarNovoNodoPorCriminalidade(novoNodo);
+			 * addCriminalidade(novoNodo); }
+			 **/
 			if (primeiroNodoDistancia == null) {
 				novoNodo.setProximoNodoDistancia(null);
 				novoNodo.setNodoAnteriorDistancia(null);
 				ultimoNodoDistancia = novoNodo;
 				primeiroNodoDistancia = novoNodo;
 			} else {
-				addDistancia(novoNodo);
+				distancia(novoNodo);
+			}
+		} catch (IllegalArgumentException argumentException) {
+			System.out.println(argumentException.getMessage());
+		}
+	}
+
+	// teste para a ordenacao!
+	public void distancia(Nodo novoNodo) {
+
+		for (Nodo i = primeiroNodoDistancia; i != null; i = i
+				.getProximoNodoDistancia()) {
+			if (i.getDistancia() > novoNodo.getDistancia()) {
+				novoNodo.setProximoNodoDistancia(i);
+				if (i.getNodoAnteriorDistancia() != null) {
+					novoNodo.setNodoAnteriorDistancia(i
+							.getNodoAnteriorDistancia());
+					i.getNodoAnteriorDistancia().setProximoNodoDistancia(
+							novoNodo);
+					i.setNodoAnteriorDistancia(novoNodo);
+				} else {
+					i.setNodoAnteriorDistancia(novoNodo);
+
+				}
+				if (i == primeiroNodoDistancia)
+					primeiroNodoDistancia = novoNodo;
+			}
+			if (novoNodo.getDistancia() > i.getDistancia()) {
+				novoNodo.setNodoAnteriorDistancia(i);
+				if (i.getProximoNodoDistancia() != null) {
+					novoNodo.setProximoNodoDistancia(i
+							.getProximoNodoDistancia());
+					i.getProximoNodoDistancia().setNodoAnteriorDistancia(
+							novoNodo);
+				}
+				i.setProximoNodoDistancia(novoNodo);
 			}
 
-		} else {
-			// seila o cara é loco mandou um null aqui! trata isso malandro..
 		}
 
 	}
 
-	private void addDistancia(Nodo novoNodo) {
-		Nodo i = null;
-		for (i = primeiroNodoDistancia; i != null; i = i.getProximoNodoDistancia()) {
+	/*
+	 * Metodo para adicionar novos nodos já os ordenando [Importante, mais
+	 * proximo para o mais distante.]
+	 */
 
-			GeoPosition geoPositionI = new GeoPosition(i.getPonto().getLatitude(), i.getPonto().getLongitude());
-			GeoPosition geoPositionNodo = new GeoPosition(novoNodo.getPonto().getLatitude(), novoNodo.getPonto().getLongitude());
+	public void addDistancia(Nodo novoNodo) {
+		for (Nodo i = primeiroNodoDistancia; i != null; i = i
+				.getProximoNodoDistancia()) {
 
-			double distancia = AlgoritmosGeograficos.calcDistancia(geoPositionI, geoPositionNodo);
-			
-			
+			// nodo deve ficar no primeiro
+			if (i.getDistancia() >= novoNodo.getDistancia()
+					&& i == primeiroNodoDistancia) {
+
+				novoNodo.setProximoNodoDistancia(i);
+				novoNodo.setNodoAnteriorDistancia(null);
+				i.setNodoAnteriorDistancia(novoNodo);
+				primeiroNodoDistancia = novoNodo;
+
+			}
+
+			// nodo deve ficar no ultimo
+			if (i.getDistancia() <= novoNodo.getDistancia()
+					&& i == ultimoNodoDistancia) {
+
+				i.setProximoNodoDistancia(novoNodo);
+				novoNodo.setNodoAnteriorDistancia(i);
+				novoNodo.setProximoNodoDistancia(null);
+				ultimoNodoDistancia = novoNodo;
+
+			}
+
+			if (i.getDistancia() < novoNodo.getDistancia()
+					&& i == primeiroNodoDistancia && i != ultimoNodoDistancia) {
+
+				novoNodo.setProximoNodoDistancia(i.getProximoNodoDistancia());
+				novoNodo.setNodoAnteriorDistancia(i);
+				if (i.getProximoNodoDistancia() != null) {
+					i.getProximoNodoDistancia().setNodoAnteriorDistancia(
+							novoNodo);
+				}
+				i.setProximoNodoDistancia(novoNodo);
+				primeiroNodoDistancia = i;
+
+			}
+
+			if (i.getDistancia() > novoNodo.getDistancia()
+					&& i == ultimoNodoDistancia) {
+
+				novoNodo.setNodoAnteriorDistancia(i.getNodoAnteriorDistancia());
+				novoNodo.setProximoNodoDistancia(null);
+				i.setNodoAnteriorDistancia(novoNodo);
+				i.setProximoNodoDistancia(null);
+				ultimoNodoDistancia = i;
+
+			}
+
+			if (i.getDistancia() <= novoNodo.getDistancia()
+					&& i != primeiroNodoDistancia && i != ultimoNodoDistancia) {
+
+				novoNodo.setNodoAnteriorDistancia(i);
+				novoNodo.setProximoNodoDistancia(i.getProximoNodoDistancia());
+				if (i.getProximoNodoDistancia() != null) {
+
+					i.getProximoNodoDistancia().setNodoAnteriorDistancia(
+							novoNodo);
+				}
+				i.setProximoNodoDistancia(novoNodo);
+
+			}
+
+			if (i.getDistancia() >= novoNodo.getDistancia()
+					&& i != primeiroNodoDistancia && i != ultimoNodoDistancia) {
+
+				novoNodo.setProximoNodoDistancia(i);
+				novoNodo.setNodoAnteriorDistancia(i.getNodoAnteriorDistancia());
+				i.getNodoAnteriorDistancia().setProximoNodoDistancia(novoNodo);
+				i.setNodoAnteriorDistancia(novoNodo);
+
+			}
+
 		}
 	}
 
 	private void addCriminalidade(Nodo novoNodo) {
 
 		Nodo i = null;
-		for (i = primeiroNodoCriminalidade; i != null; i = i.getProximoNodoCriminalidade()) {
+		for (i = primeiroNodoCriminalidade; i != null; i = i
+				.getProximoNodoCriminalidade()) {
 			// i MAIOR e ele é o primeiro.
-			if (i.getPonto().getCriminalidade() >= novoNodo.getPonto().getCriminalidade() && i == primeiroNodoCriminalidade) {
-				adicionarNoMeioPos(novoNodo, i);
+			if (i.getPonto().getCriminalidade() >= novoNodo.getPonto()
+					.getCriminalidade() && i == primeiroNodoCriminalidade) {
+				novoNodo.setProximoNodoCriminalidade(i);
+				novoNodo.setNodoAnteriorCriminalidade(null);
+				i.setNodoAnteriorCriminalidade(novoNodo);
+
+				primeiroNodoCriminalidade = novoNodo;
+
+				// adicionarNoMeioPos(novoNodo, i);
+
 				break;
 			}
 			// i MAIOR MAS ele não é o primeiro nem o ultimo,
 			// ou seja elemento no meio da lista
-			if (i.getPonto().getCriminalidade() >= novoNodo.getPonto().getCriminalidade() && i != primeiroNodoCriminalidade && i != ultimoNodoCriminalidade) {
-				Nodo refAnt = i;
-				adicionarNoMeioPos(novoNodo, refAnt);
+			if (i.getPonto().getCriminalidade() >= novoNodo.getPonto()
+					.getCriminalidade()
+					&& i != primeiroNodoCriminalidade
+					&& i != ultimoNodoCriminalidade) {
+
+				novoNodo.setProximoNodoCriminalidade(i);
+				novoNodo.setNodoAnteriorCriminalidade(i
+						.getNodoAnteriorCriminalidade());
+				i.getNodoAnteriorCriminalidade().setProximoNodoCriminalidade(
+						novoNodo);
+				i.setNodoAnteriorCriminalidade(novoNodo);
+
+				// Nodo refAnt = i;
+				// adicionarNoMeioPos(novoNodo, refAnt);
 				break;
 			}
 
 			// i MENOR MAS ele não é o primeiro nem o ultimo,
 			// ou seja elemento no meio da lista
-			if (i.getPonto().getCriminalidade() <= novoNodo.getPonto().getCriminalidade() && i != primeiroNodoCriminalidade && i != ultimoNodoCriminalidade) {
-				Nodo refProx = i;
-				Nodo refAnt = i.getNodoAnteriorCriminalidade();
-				adicionarNoMeioAnt(novoNodo, refAnt, refProx);
+			if (i.getPonto().getCriminalidade() <= novoNodo.getPonto()
+					.getCriminalidade()
+					&& i != primeiroNodoCriminalidade
+					&& i != ultimoNodoCriminalidade) {
+
+				novoNodo.setNodoAnteriorCriminalidade(i);
+				novoNodo.setProximoNodoCriminalidade(i
+						.getProximoNodoDistancia());
+				i.getProximoNodoCriminalidade().setNodoAnteriorCriminalidade(
+						novoNodo);
+				i.setProximoNodoCriminalidade(novoNodo);
+
+				// Nodo refProx = i;
+				// Nodo refAnt = i.getNodoAnteriorCriminalidade();
+				// adicionarNoMeioAnt(novoNodo, refAnt, refProx);
+				break;
 			}
 
-			// i MENOR e NÃO igual
-			if (i.getPonto().getCriminalidade() < novoNodo.getPonto().getCriminalidade() && i != primeiroNodoCriminalidade && i != ultimoNodoCriminalidade) {
-				Nodo refAnt = i.getNodoAnteriorCriminalidade();
-				Nodo refProx = i;
-				adicionarNoMeioAnt(novoNodo, refAnt, refProx);
-			}
+			/*
+			 * // i MENOR e NÃO igual if (i.getPonto().getCriminalidade() <
+			 * novoNodo.getPonto() .getCriminalidade() && i !=
+			 * primeiroNodoCriminalidade && i != ultimoNodoCriminalidade) {
+			 * 
+			 * 
+			 * 
+			 * 
+			 * 
+			 * Nodo refAnt = i.getNodoAnteriorCriminalidade(); Nodo refProx = i;
+			 * adicionarNoMeioAnt(novoNodo, refAnt, refProx); break; }
+			 */
 
 			// i MENOR
 			// i pode ser o primeiro ou o ultimo
-			if (i.getPonto().getCriminalidade() <= novoNodo.getPonto().getCriminalidade() && i == primeiroNodoCriminalidade || i == ultimoNodoCriminalidade) {
-				adicionarNoInicio(novoNodo);
+			if (i.getPonto().getCriminalidade() <= novoNodo.getPonto()
+					.getCriminalidade() && i == primeiroNodoCriminalidade) {
+				novoNodo.setNodoAnteriorCriminalidade(i);
+				novoNodo.setProximoNodoCriminalidade(i
+						.getProximoNodoCriminalidade());
+				i.getProximoNodoCriminalidade().setNodoAnteriorCriminalidade(
+						novoNodo);
+				i.setProximoNodoCriminalidade(novoNodo);
+
+				// adicionarNoInicio(novoNodo);
+				break;
+			}
+			if (i.getPonto().getCriminalidade() <= novoNodo.getPonto()
+					.getCriminalidade() && i == ultimoNodoCriminalidade) {
+				novoNodo.setNodoAnteriorCriminalidade(i);
+				novoNodo.setProximoNodoCriminalidade(null);
+				i.setProximoNodoCriminalidade(novoNodo);
+				ultimoNodoCriminalidade = novoNodo;
 				break;
 			}
 
@@ -219,12 +380,23 @@ public class Consultas {
 	public String imprimirListaCriminalidade() {
 		String elementos = "";
 
-		for (Nodo i = primeiroNodoCriminalidade; i != null; i = i.getProximoNodoCriminalidade()) {
+		for (Nodo i = primeiroNodoCriminalidade; i != null; i = i
+				.getProximoNodoCriminalidade()) {
 			elementos += " " + i.getPonto().getLogradouro();
 		}
 
 		return elementos;
 	}
 
+	public String imprimirListaDistancia() {
+		String elementos = "";
+
+		for (Nodo i = primeiroNodoDistancia; i != null; i = i
+				.getProximoNodoDistancia()) {
+			elementos += " " + i.getPonto().getExpesificacao();
+		}
+
+		return elementos;
+	}
 
 }
