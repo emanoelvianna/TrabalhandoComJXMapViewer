@@ -17,13 +17,13 @@ public class Principal2 {
 
 		Consultas c = new Consultas();
 
-		c.adicionar(pedro, 50);
+		c.adicionar(pedro, 10);
 		System.out.println(c.imprimirListaDistancia());
 		
-		c.adicionar(joao, 20);
+		c.adicionar(joao, 50);
 		System.out.println(c.imprimirListaDistancia());
 
-		c.adicionar(maria, 10);
+		c.adicionar(maria, 30);
 		System.out.println(c.imprimirListaDistancia());
 
 		

@@ -88,6 +88,8 @@ public class Consultas {
 	private Nodo ultimoNodoCriminalidade;
 	private Nodo ultimoNodoDistancia;
 
+	private int totalDistancia = 0;
+
 	public void adicionar(Ponto ponto, double distancia) {
 		try {
 			Nodo novoNodo = new Nodo();
@@ -115,39 +117,45 @@ public class Consultas {
 		}
 	}
 
-	// teste para a ordenacao!
 	public void distancia(Nodo novoNodo) {
 
-		for (Nodo i = primeiroNodoDistancia; i != null; i = i
-				.getProximoNodoDistancia()) {
-			if (i.getDistancia() > novoNodo.getDistancia()) {
-				novoNodo.setProximoNodoDistancia(i);
-				if (i.getNodoAnteriorDistancia() != null) {
-					novoNodo.setNodoAnteriorDistancia(i
-							.getNodoAnteriorDistancia());
-					i.getNodoAnteriorDistancia().setProximoNodoDistancia(
-							novoNodo);
-					i.setNodoAnteriorDistancia(novoNodo);
-				} else {
-					i.setNodoAnteriorDistancia(novoNodo);
+		Nodo aux = primeiroNodoDistancia;
 
-				}
-				if (i == primeiroNodoDistancia)
-					primeiroNodoDistancia = novoNodo;
-			}
-			if (novoNodo.getDistancia() > i.getDistancia()) {
-				novoNodo.setNodoAnteriorDistancia(i);
-				if (i.getProximoNodoDistancia() != null) {
-					novoNodo.setProximoNodoDistancia(i
-							.getProximoNodoDistancia());
-					i.getProximoNodoDistancia().setNodoAnteriorDistancia(
-							novoNodo);
-				}
-				i.setProximoNodoDistancia(novoNodo);
-			}
+		for (int i = 0; i < totalDistancia; i++) {
 
+			if (aux != null) {
+
+				if (novoNodo != primeiroNodoDistancia) {
+
+					if (novoNodo.getDistancia() > aux.getDistancia()) {
+						novoNodo.setNodoAnteriorDistancia(aux);
+						if (aux.getProximoNodoDistancia() != null) {
+							novoNodo.setProximoNodoDistancia(aux
+									.getProximoNodoDistancia());
+							aux.getProximoNodoDistancia()
+									.setNodoAnteriorDistancia(novoNodo);
+						}
+						aux.setProximoNodoDistancia(novoNodo);
+					}
+					if (novoNodo.getDistancia() < aux.getDistancia()) {
+						novoNodo.setProximoNodoDistancia(aux);
+						if (aux.getNodoAnteriorDistancia() != null) {
+							novoNodo.setNodoAnteriorDistancia(aux
+									.getNodoAnteriorDistancia());
+							aux.getNodoAnteriorDistancia()
+									.setProximoNodoDistancia(novoNodo);
+						}
+						aux.setNodoAnteriorDistancia(novoNodo);
+
+						if (aux == primeiroNodoDistancia) {
+							primeiroNodoDistancia = novoNodo;
+						}
+					}
+					aux = aux.getProximoNodoDistancia();
+				}
+			}
 		}
-
+		totalDistancia++;
 	}
 
 	/*
