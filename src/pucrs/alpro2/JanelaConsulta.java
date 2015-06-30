@@ -74,13 +74,12 @@ public class JanelaConsulta extends javax.swing.JFrame {
 				criminalidade(e);
 			}
 		});
-		
-		
+
 		JButton btnNewButton3 = new JButton("Distancia");
 
 		btnNewButton3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				consulta(e);
+				distancia(e);
 			}
 		});
 
@@ -102,7 +101,7 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		// Para obter o centro e o raio, usar como segue:
 		GeoPosition centro = gerenciador.getSelecaoCentro();
 		int raio = gerenciador.getRaio();
-		
+
 		double distancia = 0;
 
 		// Lista para armazenar o resultado da consulta
@@ -112,16 +111,13 @@ public class JanelaConsulta extends javax.swing.JFrame {
 
 		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
 
-		
 		for (Ponto ponto : listaEnderecoParadaTaxis) {
 
-			
 			GeoPosition geoPositionPontoTaxi = new GeoPosition(
 					ponto.getLatitude(), ponto.getLongitude());
 
-			distancia = AlgoritmosGeograficos.calcDistancia(geoPositionPontoTaxi, centro) * 1000;
-			
-			
+			distancia = AlgoritmosGeograficos.calcDistancia(
+					geoPositionPontoTaxi, centro) * 1000;
 
 			if (raio >= distancia) {
 				// Adiciona na lista quad de consultas
@@ -134,25 +130,56 @@ public class JanelaConsulta extends javax.swing.JFrame {
 			}
 
 		}
-		
-		Ponto p1 = listaDeConsultas.buscarPontoDistancia(0);
-		GeoPosition geo1 = new GeoPosition(p1.getLatitude(),p1.getLongitude());
-		lstPoints.add(new MyWaypoint(Color.YELLOW, distancia, geo1));
-		
-		Ponto p2 = listaDeConsultas.buscarPontoDistancia(1);
-		GeoPosition geo2 = new GeoPosition(p2.getLatitude(),p2.getLongitude());
-		lstPoints.add(new MyWaypoint(Color.RED, distancia, geo2));
 
 		// Informa o resultado para o gerenciador
 		gerenciador.setPontos(lstPoints);
 		// Informa o intervalo de valores gerados, para calcular a cor de cada
 		// ponto
-		double menorValor = 15;  // exemplo
-	    double maiorValor = 250; // exemplo
+		double menorValor = 15; // exemplo
+		double maiorValor = 250; // exemplo
 		gerenciador.setIntervaloValores(menorValor, maiorValor);
 
 		this.repaint();
 
+	}
+
+	public void distancia(ActionEvent e) {
+		GeoPosition centro = gerenciador.getSelecaoCentro();
+		int raio = gerenciador.getRaio();
+
+		double distancia = 0;
+
+		List<MyWaypoint> lstPoints = new ArrayList<>();
+
+		listaDeConsultas = new Consultas();
+
+		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
+
+		for (Ponto ponto : listaEnderecoParadaTaxis) {
+
+			GeoPosition geoPositionPontoTaxi = new GeoPosition(
+					ponto.getLatitude(), ponto.getLongitude());
+
+			distancia = AlgoritmosGeograficos.calcDistancia(
+					geoPositionPontoTaxi, centro) * 1000;
+
+			if (raio >= distancia) {
+				// Adiciona na lista quad de consultas
+
+				listaDeConsultas.adicionar(ponto, distancia);
+
+				Color color = intervalosDeCoresDistancia(distancia);
+
+				lstPoints.add(new MyWaypoint(color, distancia,
+						geoPositionPontoTaxi));
+
+			}
+
+		}
+
+		gerenciador.setPontos(lstPoints);
+
+		this.repaint();
 	}
 
 	/*
@@ -179,14 +206,35 @@ public class JanelaConsulta extends javax.swing.JFrame {
 			if (raio >= distancia) {
 				listaDeConsultas.adicionar(ponto, distancia);
 
-				lstPoints.add(new MyWaypoint(Color.BLACK, ponto
-						.getCriminalidade(), geoPositionPontoTaxi));
+				Color color = intervaloDeCoresCriminalidade(ponto
+						.getCriminalidade());
+
+				lstPoints.add(new MyWaypoint(color, ponto.getCriminalidade(),
+						geoPositionPontoTaxi));
 			}
 		}
 
 		gerenciador.setPontos(lstPoints);
 		this.repaint();
 
+	}
+
+	private Color intervalosDeCoresDistancia(double distancia) {
+		if (distancia <= 500)
+			return Color.DARK_GRAY;
+		else
+			return Color.BLUE;
+	}
+
+	public Color intervaloDeCoresCriminalidade(int grauCriminalidad) {
+		if (grauCriminalidad < 100) {
+			return Color.BLUE;
+		} else {
+			if (grauCriminalidad > 200) {
+				return Color.RED;
+			}
+		}
+		return Color.BLACK;
 	}
 
 	private class EventosMouse extends MouseAdapter {
@@ -198,7 +246,7 @@ public class JanelaConsulta extends javax.swing.JFrame {
 			GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
 			// System.out.println(loc.getLatitude()+", "+loc.getLongitude());
 			lastButton = e.getButton();
-			// Bot√£o 3: seleciona localiza√ß√£o
+			// Bot„o 3: seleciona localizaÁ„o
 			if (lastButton == MouseEvent.BUTTON3) {
 				gerenciador.setSelecaoCentro(loc);
 				gerenciador.setSelecaoBorda(loc);
@@ -208,7 +256,7 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		}
 
 		public void mouseDragged(MouseEvent e) {
-			// Arrasta com o bot√£o 3 para definir o raio
+			// Arrasta com o bot„o 3 para definir o raio
 			if (lastButton == MouseEvent.BUTTON3) {
 				JXMapViewer mapa = gerenciador.getMapKit().getMainMap();
 				gerenciador.setSelecaoBorda(mapa.convertPointToGeoPosition(e
