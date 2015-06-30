@@ -11,7 +11,7 @@ public class Principal2 {
 
 		Ponto pedro = new Ponto();
 		pedro.setExpesificacao("Pedro");
-		
+
 		Ponto maria = new Ponto();
 		maria.setExpesificacao("Maria");
 
@@ -19,14 +19,16 @@ public class Principal2 {
 
 		c.adicionar(pedro, 10);
 		System.out.println(c.imprimirListaDistancia());
-		
+
 		c.adicionar(joao, 50);
 		System.out.println(c.imprimirListaDistancia());
 
 		c.adicionar(maria, 30);
 		System.out.println(c.imprimirListaDistancia());
 
-		
+		Ponto ponto = c.buscarPontoDistancia(0);
+		System.out.println(ponto.getExpesificacao());
+
 	}
 
 }

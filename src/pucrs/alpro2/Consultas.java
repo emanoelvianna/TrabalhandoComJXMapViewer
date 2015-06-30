@@ -2,8 +2,6 @@ package pucrs.alpro2;
 
 import org.jxmapviewer.viewer.GeoPosition;
 
-import pucrs.alpro2.algoritmos.AlgoritmosGeograficos;
-
 public class Consultas {
 
 	private class Nodo {
@@ -160,6 +158,29 @@ public class Consultas {
 		}
 	}
 
+	public Ponto buscarPontoDistancia(int pos) {
+		int cont = 0;
+		for (Nodo i = primeiroNodoDistancia; i != null; i = i
+				.getProximoNodoDistancia()) {
+			if (cont == pos) {
+				return i.getPonto();
+			}
+			cont++;
+		}
+		return null;
+	}
+
+	public GeoPosition buscarDistanciaRetornaGeoPosition(int pos) {
+		int cont = 0;
+		for (Nodo i = primeiroNodoDistancia; i != null; i = i
+				.getProximoNodoDistancia()) {
+			if (cont == pos) {
+				return new GeoPosition(i.getPonto().getLatitude(), i.getPonto().getLongitude());
+			}
+		}
+		return null;
+	}
+
 	public Nodo buscarNodoDistancia(Nodo nodo) {
 		for (Nodo i = primeiroNodoDistancia; i != null; i = i
 				.getProximoNodoDistancia()) {
@@ -171,6 +192,29 @@ public class Consultas {
 		return null;
 	}
 
+	public Ponto buscarPontoCriminalidade(int pos) {
+		int cont = 0;
+		for (Nodo i = primeiroNodoCriminalidade; i != null; i = i
+				.getProximoNodoCriminalidade()) {
+			if (cont == pos) {
+				return i.getPonto();
+			}
+		}
+		return null;
+	}
+
+	public GeoPosition buscarCriminalidadeRetornaGeoPosition(int pos) {
+		int cont = 0;
+		for (Nodo i = primeiroNodoCriminalidade; i != null; i = i
+				.getProximoNodoCriminalidade()) {
+			if (cont == pos) {
+				return new GeoPosition(i.getPonto().getLatitude(), i.getPonto()
+						.getLongitude());
+			}
+		}
+		return null;
+	}
+
 	public Nodo buscarNodoCriminalidade(Nodo nodo) {
 		for (Nodo i = primeiroNodoCriminalidade; i != null; i = i
 				.getProximoNodoCriminalidade()) {
@@ -179,6 +223,14 @@ public class Consultas {
 			}
 		}
 		return null;
+	}
+
+	public Nodo getPrimeiroNodoCriminalidade() {
+		return primeiroNodoCriminalidade;
+	}
+
+	public Nodo getPrimeiroNodoDistancia() {
+		return primeiroNodoDistancia;
 	}
 
 	public String imprimirListaCriminalidade() {

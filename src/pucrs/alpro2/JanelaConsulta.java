@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,8 +67,13 @@ public class JanelaConsulta extends javax.swing.JFrame {
 			}
 		});
 
-		// bot√£o para teste
 		JButton btnNewButton2 = new JButton("Grau Criminalidade");
+
+		btnNewButton2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				criminalidade(e);
+			}
+		});
 
 		painelLateral.add(btnNewButton);
 		painelLateral.add(btnNewButton2);
@@ -80,8 +84,6 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		// Importante leitura de dados;
 		dados = new Dados();
 		dados.lerArquivoDeParadasDeTaxi();
-
-		listaDeConsultas = new Consultas();
 
 	}
 
@@ -94,44 +96,35 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		// Lista para armazenar o resultado da consulta
 		List<MyWaypoint> lstPoints = new ArrayList<>();
 
+		listaDeConsultas = new Consultas();
+
 		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
 
 		for (Ponto ponto : listaEnderecoParadaTaxis) {
-			
+
 			GeoPosition geoPositionPontoTaxi = new GeoPosition(
 					ponto.getLatitude(), ponto.getLongitude());
-			
+
 			double distancia = AlgoritmosGeograficos.calcDistancia(
 					geoPositionPontoTaxi, centro) * 1000;
-			
+
 			if (raio >= distancia) {
 				// Adiciona na lista quad de consultas
+
 				listaDeConsultas.adicionar(ponto, distancia);
 
-				lstPoints.add(new MyWaypoint(Color.BLUE, ponto
-						.getCriminalidade(), geoPositionPontoTaxi));
+				Ponto p1 = listaDeConsultas.buscarPontoDistancia(0);
+				GeoPosition geo1 = new GeoPosition(p1.getLatitude(),
+						p1.getLongitude());
+				lstPoints.add(new MyWaypoint(Color.BLACK, distancia, geo1));
+
+				lstPoints.add(new MyWaypoint(Color.BLUE, distancia,
+						geoPositionPontoTaxi));
 
 			}
+
 		}
 
-		/*
-		 * // Exemplo:
-		 * 
-		 * // ex: valor da consulta (criminalidade ou distancia) double valor =
-		 * 250;
-		 * 
-		 * // ex: localizaÁ„o da parada GeoPosition loc = new
-		 * GeoPosition(-30.05, -51.18);
-		 * 
-		 * double distancia1 = AlgoritmosGeograficos.calcDistancia(loc, centro)
-		 * * 1000;
-		 * 
-		 * System.out.println("Distancia: " + distancia1);
-		 * System.out.println("Raio: " + raio);
-		 * 
-		 * if (raio >= distancia1) { lstPoints.add(new MyWaypoint(Color.BLUE,
-		 * valor, loc)); }
-		 */
 		// Informa o resultado para o gerenciador
 		gerenciador.setPontos(lstPoints);
 		// Informa o intervalo de valores gerados, para calcular a cor de cada
@@ -140,6 +133,40 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		double maiorValor = 250; // exemplo
 		gerenciador.setIntervaloValores(menorValor, maiorValor);
 
+		this.repaint();
+
+	}
+
+	/*
+	 * Realizar a consulta pelo grau de criminalidade
+	 */
+	public void criminalidade(ActionEvent e) {
+
+		GeoPosition centro = gerenciador.getSelecaoCentro();
+		int raio = gerenciador.getRaio();
+
+		List<MyWaypoint> lstPoints = new ArrayList<>();
+
+		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
+
+		listaDeConsultas = new Consultas();
+
+		for (Ponto ponto : listaEnderecoParadaTaxis) {
+
+			GeoPosition geoPositionPontoTaxi = new GeoPosition(
+					ponto.getLatitude(), ponto.getLongitude());
+			double distancia = AlgoritmosGeograficos.calcDistancia(
+					geoPositionPontoTaxi, centro) * 1000;
+
+			if (raio >= distancia) {
+				listaDeConsultas.adicionar(ponto, distancia);
+
+				lstPoints.add(new MyWaypoint(Color.BLACK, ponto
+						.getCriminalidade(), geoPositionPontoTaxi));
+			}
+		}
+
+		gerenciador.setPontos(lstPoints);
 		this.repaint();
 
 	}
