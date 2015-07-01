@@ -66,6 +66,7 @@ public class GerenciadorMapa {
 			info = new VirtualEarthTileFactoryInfo(
 					VirtualEarthTileFactoryInfo.MAP);
 		}
+		
 		DefaultTileFactory tileFactory = new DefaultTileFactory(info);
 		jXMapKit.setTileFactory(tileFactory);
 
@@ -78,7 +79,7 @@ public class GerenciadorMapa {
 		jXMapKit.setAddressLocation(centro);
 		// Indicando que não desejamos ver um marcador nessa posição
 		jXMapKit.setAddressLocationShown(false);
-
+	
 		// Criando um objeto para "pintar" os pontos
 		pontosPainter = new WaypointPainter<MyWaypoint>();
 
@@ -102,13 +103,13 @@ public class GerenciadorMapa {
 				float fator = (float) ((wp.getValue() - valorMenor) / (valorMaior - valorMenor));
 				// Seta a opacidade da cor usando o fator de importância
 				// calculado (0=mínimo,1=máximo)
-				
-				
+
 				/*
 				 * Minha modifica��o do trecho de c�digo!
 				 */
-				g.setColor(new Color(cor.getRed(), cor.getGreen(), cor.getBlue(), cor.getAlpha() / 2));
-				
+				g.setColor(new Color(cor.getRed(), cor.getGreen(), cor
+						.getBlue(), cor.getAlpha() / 2));
+
 				g.fill(new Ellipse2D.Float(x - 3, y - 3, 6, 6));
 			}
 		});
@@ -200,6 +201,7 @@ public class GerenciadorMapa {
 	 * @returns referência para objeto JXMapKit em uso
 	 */
 	public JXMapKit getMapKit() {
+
 		return jXMapKit;
 	}
 

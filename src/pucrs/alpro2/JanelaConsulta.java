@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
+import org.jxmapviewer.viewer.util.GeoUtil;
 
 import pucrs.alpro2.algoritmos.AlgoritmosGeograficos;
 
@@ -35,6 +36,8 @@ public class JanelaConsulta extends javax.swing.JFrame {
 
 	private JPanel painelMapa;
 	private JPanel painelLateral;
+
+	GeoUtil geoUtil;
 
 	/**
 	 * Creates new form JanelaConsulta
@@ -100,6 +103,7 @@ public class JanelaConsulta extends javax.swing.JFrame {
 
 		// Para obter o centro e o raio, usar como segue:
 		GeoPosition centro = gerenciador.getSelecaoCentro();
+		// System.out.println(centro.toString());
 		int raio = gerenciador.getRaio();
 
 		double distancia = 0;
@@ -140,6 +144,11 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		gerenciador.setIntervaloValores(menorValor, maiorValor);
 
 		this.repaint();
+
+	}
+
+	// Compara se o nome da rua é igual a que o user esta
+	public void c(Consultas listaDeConsultas, GeoPosition centro) {
 
 	}
 
@@ -244,6 +253,7 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		public void mousePressed(MouseEvent e) {
 			JXMapViewer mapa = gerenciador.getMapKit().getMainMap();
 			GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
+
 			// System.out.println(loc.getLatitude()+", "+loc.getLongitude());
 			lastButton = e.getButton();
 			// Botão 3: seleciona localização

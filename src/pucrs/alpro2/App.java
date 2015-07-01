@@ -6,11 +6,6 @@
 package pucrs.alpro2;
 
 import java.io.IOException;
-import java.util.LinkedList;
-
-import org.jxmapviewer.viewer.GeoPosition;
-
-import pucrs.alpro2.algoritmos.AlgoritmosGeograficos;
 
 public class App {
 	public static void main(String[] args) throws IOException {
