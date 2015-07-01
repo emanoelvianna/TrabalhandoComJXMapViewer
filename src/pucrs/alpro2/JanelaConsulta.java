@@ -147,11 +147,6 @@ public class JanelaConsulta extends javax.swing.JFrame {
 
 	}
 
-	// Compara se o nome da rua é igual a que o user esta
-	public void c(Consultas listaDeConsultas, GeoPosition centro) {
-
-	}
-
 	public void distancia(ActionEvent e) {
 		GeoPosition centro = gerenciador.getSelecaoCentro();
 		int raio = gerenciador.getRaio();
