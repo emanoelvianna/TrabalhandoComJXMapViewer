@@ -7,7 +7,7 @@ package pucrs.alpro2;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,18 +26,6 @@ import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.util.GeoUtil;
 
 import pucrs.alpro2.algoritmos.AlgoritmosGeograficos;
-import javax.swing.BoxLayout;
-import java.awt.FlowLayout;
-import javax.swing.JSplitPane;
-import javax.swing.JInternalFrame;
-import javax.swing.JTabbedPane;
-import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.JDesktopPane;
-import javax.swing.JScrollPane;
-import javax.swing.JLayeredPane;
-import javax.swing.SwingConstants;
-import javax.swing.JToolBar;
 
 public class JanelaConsulta extends javax.swing.JFrame {
 
@@ -76,45 +64,53 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		painelLateral = new JPanel();
 		painelMapa.add(painelLateral, BorderLayout.NORTH);
 		painelLateral.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
+
 		JPanel panel_1 = new JPanel();
 		FlowLayout flowLayout_1 = (FlowLayout) panel_1.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.LEADING);
 		flowLayout_1.setVgap(3);
 		flowLayout_1.setHgap(10);
 		painelLateral.add(panel_1);
-						
-								JButton btnNewButton = new JButton("Consulta");
-								panel_1.add(btnNewButton);
-								
-										btnNewButton.addActionListener(new ActionListener() {
-											public void actionPerformed(ActionEvent e) {
-												consulta(e);
-											}
-										});
-				
-						JButton btnNewButton3 = new JButton("Distancia");
-						panel_1.add(btnNewButton3);
-						
-								btnNewButton3.addActionListener(new ActionListener() {
-									public void actionPerformed(ActionEvent e) {
-										distancia(e);
-									}
-								});
-		
-				JButton btnNewButton2 = new JButton("Criminalidade");
-				panel_1.add(btnNewButton2);
-				
-						btnNewButton2.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								criminalidade(e);
-							}
-						});
-		
+
+		JButton btnNewButton = new JButton("Consulta");
+		panel_1.add(btnNewButton);
+
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				consulta(e);
+			}
+		});
+
+		JButton btnNewButton3 = new JButton("Distancia");
+		panel_1.add(btnNewButton3);
+
+		btnNewButton3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				distancia(e);
+			}
+		});
+
+		JButton btnNewButton2 = new JButton("Criminalidade");
+		panel_1.add(btnNewButton2);
+
+		btnNewButton2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				criminalidade(e);
+			}
+		});
+		textField = new JTextField();
+
 		JButton btnNewButton_1 = new JButton("Nome da rua:");
 		painelLateral.add(btnNewButton_1);
-		
-		textField = new JTextField();
+
+		btnNewButton2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String rua = textField.getText();
+				System.out.println("Rua: " + rua);
+				buscar(e, rua);
+			}
+		});
+
 		painelLateral.add(textField);
 		textField.setColumns(30);
 
@@ -247,6 +243,34 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		}
 
 		gerenciador.setPontos(lstPoints);
+		this.repaint();
+
+	}
+
+	/*
+	 * Consulta dois, buscar rua no jTextField e realiza a comparação entre as
+	 * paradas para caso exister pintar no mapa.
+	 */
+	private void buscar(ActionEvent e, String rua) {
+		List<MyWaypoint> lstPoints = new ArrayList<>();
+		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
+		listaDeConsultas = new Consultas();
+
+		for (Ponto ponto : listaEnderecoParadaTaxis) {
+
+			if (ponto.getLogradouro().contains(rua)) {
+
+				GeoPosition geoPositionPontoTaxi = new GeoPosition(
+						ponto.getLatitude(), ponto.getLongitude());
+
+				listaDeConsultas.adicionar(ponto, 0);
+				lstPoints.add(new MyWaypoint(Color.BLUE, ponto
+						.getCriminalidade(), geoPositionPontoTaxi));
+			}
+		}
+
+		gerenciador.setPontos(lstPoints);
+
 		this.repaint();
 
 	}
