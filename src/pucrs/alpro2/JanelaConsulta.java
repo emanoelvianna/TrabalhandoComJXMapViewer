@@ -7,6 +7,7 @@ package pucrs.alpro2;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,12 +19,25 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.util.GeoUtil;
 
 import pucrs.alpro2.algoritmos.AlgoritmosGeograficos;
+import javax.swing.BoxLayout;
+import java.awt.FlowLayout;
+import javax.swing.JSplitPane;
+import javax.swing.JInternalFrame;
+import javax.swing.JTabbedPane;
+import java.awt.Component;
+import javax.swing.Box;
+import javax.swing.JDesktopPane;
+import javax.swing.JScrollPane;
+import javax.swing.JLayeredPane;
+import javax.swing.SwingConstants;
+import javax.swing.JToolBar;
 
 public class JanelaConsulta extends javax.swing.JFrame {
 
@@ -38,13 +52,13 @@ public class JanelaConsulta extends javax.swing.JFrame {
 	private JPanel painelLateral;
 
 	GeoUtil geoUtil;
+	private JTextField textField;
 
 	/**
 	 * Creates new form JanelaConsulta
 	 */
 	public JanelaConsulta() {
 		super();
-		// initComponents();
 
 		GeoPosition poa = new GeoPosition(-30.05, -51.18);
 		gerenciador = new GerenciadorMapa(poa,
@@ -60,35 +74,49 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		getContentPane().add(painelMapa, BorderLayout.CENTER);
 
 		painelLateral = new JPanel();
-		getContentPane().add(painelLateral, BorderLayout.WEST);
-
-		JButton btnNewButton = new JButton("Consulta");
-
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				consulta(e);
-			}
-		});
-
-		JButton btnNewButton2 = new JButton("Criminalidade");
-
-		btnNewButton2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				criminalidade(e);
-			}
-		});
-
-		JButton btnNewButton3 = new JButton("Distancia");
-
-		btnNewButton3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				distancia(e);
-			}
-		});
-
-		painelLateral.add(btnNewButton);
-		painelLateral.add(btnNewButton2);
-		painelLateral.add(btnNewButton3);
+		painelMapa.add(painelLateral, BorderLayout.NORTH);
+		painelLateral.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
+		JPanel panel_1 = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panel_1.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.LEADING);
+		flowLayout_1.setVgap(3);
+		flowLayout_1.setHgap(10);
+		painelLateral.add(panel_1);
+						
+								JButton btnNewButton = new JButton("Consulta");
+								panel_1.add(btnNewButton);
+								
+										btnNewButton.addActionListener(new ActionListener() {
+											public void actionPerformed(ActionEvent e) {
+												consulta(e);
+											}
+										});
+				
+						JButton btnNewButton3 = new JButton("Distancia");
+						panel_1.add(btnNewButton3);
+						
+								btnNewButton3.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent e) {
+										distancia(e);
+									}
+								});
+		
+				JButton btnNewButton2 = new JButton("Criminalidade");
+				panel_1.add(btnNewButton2);
+				
+						btnNewButton2.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								criminalidade(e);
+							}
+						});
+		
+		JButton btnNewButton_1 = new JButton("Nome da rua:");
+		painelLateral.add(btnNewButton_1);
+		
+		textField = new JTextField();
+		painelLateral.add(textField);
+		textField.setColumns(30);
 
 		this.setSize(800, 600);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
