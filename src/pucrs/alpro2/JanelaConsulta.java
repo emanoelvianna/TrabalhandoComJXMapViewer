@@ -100,14 +100,12 @@ public class JanelaConsulta extends javax.swing.JFrame {
 		});
 		textField = new JTextField();
 
-		JButton btnNewButton_1 = new JButton("Nome da rua:");
-		painelLateral.add(btnNewButton_1);
+		JButton btnNewButton4 = new JButton("Rua");
+		panel_1.add(btnNewButton4);
 
-		btnNewButton2.addActionListener(new ActionListener() {
+		btnNewButton4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String rua = textField.getText();
-				System.out.println("Rua: " + rua);
-				buscar(e, rua);
+				buscar(e);
 			}
 		});
 
@@ -251,14 +249,17 @@ public class JanelaConsulta extends javax.swing.JFrame {
 	 * Consulta dois, buscar rua no jTextField e realiza a comparação entre as
 	 * paradas para caso exister pintar no mapa.
 	 */
-	private void buscar(ActionEvent e, String rua) {
+	private void buscar(ActionEvent e) {
 		List<MyWaypoint> lstPoints = new ArrayList<>();
 		listaEnderecoParadaTaxis = dados.getListaEnderecoParadaTaxis();
 		listaDeConsultas = new Consultas();
 
+		String rua = textField.getText();
+
 		for (Ponto ponto : listaEnderecoParadaTaxis) {
 
-			if (ponto.getLogradouro().contains(rua)) {
+			if ((ponto.getExpesificacao() + ponto.getLogradouro())
+					.contains(rua)) {
 
 				GeoPosition geoPositionPontoTaxi = new GeoPosition(
 						ponto.getLatitude(), ponto.getLongitude());
